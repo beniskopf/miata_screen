@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:miata_screen/service.dart';
 
 class MusicControl extends StatelessWidget {
   @override
@@ -41,10 +42,13 @@ class MusicControl extends StatelessWidget {
   }
 
   Widget musicButton(int type) {
-    switch(type) {
+    switch (type) {
       case 0: //back button
         return GestureDetector(
-          onTap:(){print('click music!');},
+          onTap: () {
+            Bash.runBashCommand(
+                "dbus-send --system --print-reply --dest=org.bluez /org/bluez/hci0/dev_DC_52_85_B0_B8_04 org.bluez.MediaControl1.Previous");
+          },
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(
@@ -63,7 +67,10 @@ class MusicControl extends StatelessWidget {
         break; // The switch statement must be told to exit, or it will execute every case.
       case 1: //pause
         return GestureDetector(
-          onTap:(){print('click music!');},
+          onTap: () {
+            Bash.runBashCommand(
+                "dbus-send --system --print-reply --dest=org.bluez /org/bluez/hci0/dev_DC_52_85_B0_B8_04 org.bluez.MediaControl1.Pause");
+          },
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(
@@ -82,7 +89,10 @@ class MusicControl extends StatelessWidget {
         break;
       case 2:
         return GestureDetector(
-          onTap:(){print('click music!');},
+          onTap: () {
+            Bash.runBashCommand(
+                "dbus-send --system --print-reply --dest=org.bluez /org/bluez/hci0/dev_DC_52_85_B0_B8_04 org.bluez.MediaControl1.Play");
+          },
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(
@@ -99,9 +109,12 @@ class MusicControl extends StatelessWidget {
           ),
         );
         break;
-      case 3:
+      case 3: //next
         return GestureDetector(
-          onTap:(){print('click music!');},
+          onTap: () {
+            Bash.runBashCommand(
+                "dbus-send --system --print-reply --dest=org.bluez /org/bluez/hci0/dev_DC_52_85_B0_B8_04 org.bluez.MediaControl1.Next");
+          },
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(
@@ -121,6 +134,5 @@ class MusicControl extends StatelessWidget {
       default:
         return Container();
     }
-
   }
 }

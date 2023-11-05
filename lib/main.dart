@@ -3,17 +3,21 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:miata_screen/compassui.dart';
+import 'package:miata_screen/service.dart';
 import 'package:miata_screen/speedometer.dart';
 import 'package:miata_screen/squareButton.dart';
+import 'package:miata_screen/trackinfo.dart';
 import 'package:text_scroll/text_scroll.dart';
+import 'package:window_manager/window_manager.dart';
+import 'debugDrawer.dart';
 import 'gifSpeedPlayer.dart';
 import 'musicControl.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await windowManager.ensureInitialized();
-  // await WindowManager.instance.setMinimumSize(const Size(1280, 428));
-  // await WindowManager.instance.setMaximumSize(const Size(1280, 428));
+  await windowManager.ensureInitialized();
+  await WindowManager.instance.setMinimumSize(const Size(1280, 428));
+  await WindowManager.instance.setMaximumSize(const Size(1280, 428));
   runApp(const MyApp());
 }
 
@@ -50,6 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Random random = Random();
   double degreeDirectionTempDemo = 0.1;
   double degreeDirection = 0;
+  String songTitle = "";
+  String artistName = "";
 
   @override
   void initState() {
@@ -57,21 +63,41 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
+  songInfoSpinning() async {
+    String payload = await ServiceClass.runBashCommand(
+        "dbus-send --system --print-reply --dest=org.bluez /org/bluez/hci0/dev_DC_52_85_B0_B8_04/player0 org.freedesktop.DBus.Properties.Get string:org.bluez.MediaPlayer1 string:Track");
+    Map<String, String> artistSongMap =
+        ServiceClass.extractArtistAndTitle(payload);
+    setState(() {
+      songTitle = artistSongMap['Title'] ?? "x";
+      artistName = artistSongMap['Artist'] ?? "x";
+    });
+    await Future.delayed(Duration(seconds: 5));
+    songInfoSpinning();
+  }
+
   speedSpinning() async {
     setState(() {
+      songTitle = "x";
+      artistName = "y";
       degreeDirectionTempDemo++;
       degreeDirection = degreeDirectionTempDemo % 360;
       isGoingUpDemoSpeed ? speed++ : speed--;
       //print(degreeDirection.toString());
     });
     await Future.delayed(Duration(milliseconds: 30));
+
     if (speed > 100) {
       setState(() {
+        songTitle = "$songTitle" + "$songTitle";
+        artistName = "$artistName" + "$artistName";
         isGoingUpDemoSpeed = false;
       });
     }
     if (speed < 0) {
       setState(() {
+        songTitle = "x";
+        artistName = "y";
         isGoingUpDemoSpeed = true;
       });
     }
@@ -84,12 +110,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    //TrackInfo.extractArtistAndTitle("input");
     // double angle = CompassCalc.calculateBearing(52.5200, 13.4050, 48.8566,
     //     2.3522); //from point first 2 inputs, to-point last 2 parameters
     // print('The angle between the coordinates is $angle degrees.');
     return Scaffold(
       key: _key,
       drawer: Drawer(
+          backgroundColor: Colors.transparent,
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topRight: Radius.circular(0), bottomRight: Radius.circular(0)),
@@ -98,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Container(
             width: 600,
             height: double.infinity,
-            color: Colors.white,
+            //color: Colors.white,
             child: drawerContent,
           )),
       body: Container(
@@ -118,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Container(
                   height: 170,
                   width: 430,
-                  child: MusicControl(),
+                  child: MusicControl(speed.toString(), speed.toString()),
                 ),
               ),
               Positioned(
@@ -126,18 +154,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 top: 190,
                 child: MainMenuButton("debug", () {
                   setState(() {
-                    drawerContent = ListView(
-                      children: [
-                        ListTile(
-                          title: Text(' - DEBUG MENU - '),
-                        ),
-                        ListTile(
-                          title: Text(''),
-                        ),
-                        ListTile(
-                          title: Text('Version: $speed'),
-                        ),
-                      ],
+                    drawerContent = ListView.separated(
+                      itemCount: DrawerContentClass.debugContent().length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return DrawerContentClass.debugContent()[index];
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return SizedBox(height: 5.0);
+                      },
                     );
                   });
                   _key.currentState!.openDrawer();
@@ -161,15 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     });
                     _key.currentState!.openDrawer();
                   }, "assets/garage.jpeg", 200, 200)),
-              Positioned(
-                  left: 850,
-                  top: 190,
-                  child: MainMenuButton("XXX", () {
-                    setState(() {
-                      drawerContent = Center(child: Text('X'));
-                    });
-                    _key.currentState!.openDrawer();
-                  }, "assets/placeholder.jpeg", 200, 200)),
+              Positioned(left: 850, top: 190, child: VolumeControl()),
               Positioned(
                   left: 450,
                   top: 10,
@@ -240,4 +256,3 @@ class _MyHomePageState extends State<MyHomePage> {
     return -degree * (770 / 180) - 370;
   }
 }
-

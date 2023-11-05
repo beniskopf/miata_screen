@@ -1,8 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:miata_screen/service.dart';
+import 'package:miata_screen/squareButton.dart';
 
 class MusicControl extends StatelessWidget {
+
+  String songTitle;
+  String artistName;
+
+
+  MusicControl(this.songTitle, this.artistName);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,11 +35,11 @@ class MusicControl extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    'Song title',
+                    songTitle,
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                   Text(
-                    'Interpret',
+                    artistName,
                     style: TextStyle(color: Colors.white),
                   )
                 ],
@@ -46,7 +54,7 @@ class MusicControl extends StatelessWidget {
       case 0: //back button
         return GestureDetector(
           onTap: () {
-            Bash.runBashCommand(
+            ServiceClass.runBashCommand(
                 "dbus-send --system --print-reply --dest=org.bluez /org/bluez/hci0/dev_DC_52_85_B0_B8_04 org.bluez.MediaControl1.Previous");
           },
           child: Container(
@@ -68,7 +76,7 @@ class MusicControl extends StatelessWidget {
       case 1: //pause
         return GestureDetector(
           onTap: () {
-            Bash.runBashCommand(
+            ServiceClass.runBashCommand(
                 "dbus-send --system --print-reply --dest=org.bluez /org/bluez/hci0/dev_DC_52_85_B0_B8_04 org.bluez.MediaControl1.Pause");
           },
           child: Container(
@@ -90,7 +98,7 @@ class MusicControl extends StatelessWidget {
       case 2:
         return GestureDetector(
           onTap: () {
-            Bash.runBashCommand(
+            ServiceClass.runBashCommand(
                 "dbus-send --system --print-reply --dest=org.bluez /org/bluez/hci0/dev_DC_52_85_B0_B8_04 org.bluez.MediaControl1.Play");
           },
           child: Container(
@@ -112,7 +120,7 @@ class MusicControl extends StatelessWidget {
       case 3: //next
         return GestureDetector(
           onTap: () {
-            Bash.runBashCommand(
+            ServiceClass.runBashCommand(
                 "dbus-send --system --print-reply --dest=org.bluez /org/bluez/hci0/dev_DC_52_85_B0_B8_04 org.bluez.MediaControl1.Next");
           },
           child: Container(
@@ -135,4 +143,27 @@ class MusicControl extends StatelessWidget {
         return Container();
     }
   }
+}
+
+class VolumeControl extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      MainMenuButton(
+        "VOL\nup",
+          (){ServiceClass.runBashCommand(
+              "amixer sset 'Master' 5%+");},
+          "assets/debug.jpg",
+        95,95
+      ),
+      MainMenuButton(
+          "VOL\ndown",
+              (){ServiceClass.runBashCommand(
+              "amixer sset 'Master' 5%-");},
+          "assets/debug.jpg",
+          95,95
+      )
+    ],);
+  }
+
 }

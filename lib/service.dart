@@ -1,6 +1,6 @@
 import 'dart:io';
 
-class Bash{
+class ServiceClass{
 
   static Future<String> runBashCommand(String command) async {
     try {
@@ -22,6 +22,22 @@ class Bash{
       print('Error: $e');
       return "error";
     }
+  }
+
+  static Map<String, String> extractArtistAndTitle(String payload) {
+    final artistRegex = RegExp(r'"Artist"\s+variant\s+string\s+"([^"]+)"');
+    final titleRegex = RegExp(r'"Title"\s+variant\s+string\s+"([^"]+)"');
+
+    final artistMatch = artistRegex.firstMatch(payload);
+    final titleMatch = titleRegex.firstMatch(payload);
+
+    final artist = artistMatch?.group(1) ?? 'Artist not found';
+    final title = titleMatch?.group(1) ?? 'Title not found';
+
+    return {
+      'Artist': artist,
+      'Title': title,
+    };
   }
 
 }

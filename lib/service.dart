@@ -9,17 +9,17 @@ class ServiceClass{
 
       // Check the exit code and standard output
       if (result.exitCode == 0) {
-        print('Command executed successfully');
-        print('Output: ${result.stdout}');
+        // print('Command executed successfully');
+        // print('Output: ${result.stdout}');
         return result.stdout;
       } else {
-        print('Error executing the command');
-        print('Exit code: ${result.exitCode}');
-        print('Error: ${result.stderr}');
+        // print('Error executing the command');
+        // print('Exit code: ${result.exitCode}');
+        // print('Error: ${result.stderr}');
         return "error";
       }
     } catch (e) {
-      print('Error: $e');
+      // print('Error: $e');
       return "error";
     }
   }

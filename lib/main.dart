@@ -47,7 +47,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _key = GlobalKey(); // Create a key
   Widget drawerContent = Container();
-  double speed = 10;
+  double speed = 0;
   int randomGifIndex = 1;
   bool isGoingUpDemoSpeed = true;
   Random random = Random();
@@ -61,9 +61,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    songInfoSpinning();
+    //songInfoSpinning();
     //speedSpinningDemo();
-    timeAndDateSpinning();
+    //timeAndDateSpinning();
     gpsSpinning();
     super.initState();
   }
@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
   timeAndDateSpinning() async {
     String timereturn = await ServiceClass.runBashCommand(BashCommands.getTime);
     String datereturn = await ServiceClass.runBashCommand(BashCommands.getDate);
-    print(time + date);
+    // print(time + date);
     setState(() {
       time = timereturn ?? "";
       date = datereturn ?? ""; //char check would be sweet
@@ -97,10 +97,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   gpsSpinning() async {
-    final httpResponse =
-        await http.get(Uri.http('127.0.0.1', '5000/get_gps_data'));
+    // final httpResponse =
+    //     await http.get(Uri.http('127.0.0.1', '5000/get_gps_data'));
+    // GpsDto response =
+    //     GpsDto.fromJson(httpResponse.body as Map<String, dynamic>);
+    final rawData = await ServiceClass.runBashCommand("curl http://127.0.0.1:5000/get_gps_data");
+    print(rawData);
     GpsDto response =
-        GpsDto.fromJson(httpResponse.body as Map<String, dynamic>);
+    GpsDto.fromJson(rawData as Map<String, dynamic>);
     setState(() {
       speed = response.speed ?? response.speed! * 3.6;
 

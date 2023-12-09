@@ -39,10 +39,12 @@ dependencies:
   microphone: ^0.1.0
   wave: ^0.2.2
   window_manager: ^0.3.7
-  flutter_gif: ^0.0.4
   infinite_carousel: ^1.0.3
   package_info_plus: ^4.2.0
   text_scroll: ^0.2.0
+  flutterpi_tool: ^0.1.2
+  flutter_colorpicker: ^1.0.3
+  http: ^0.13.6
 
 dev_dependencies:
   flutter_test:
@@ -70,7 +72,6 @@ flutter:
   assets:
     - assets/
     - assets/randomgifs/
-    - assets/shaders/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

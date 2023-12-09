@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:miata_screen/service.dart';
 import 'package:miata_screen/squareButton.dart';
 
+import 'bashCommands.dart';
+
 class MusicControl extends StatelessWidget {
 
   String songTitle;
@@ -55,7 +57,7 @@ class MusicControl extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             ServiceClass.runBashCommand(
-                "dbus-send --system --print-reply --dest=org.bluez /org/bluez/hci0/dev_DC_52_85_B0_B8_04 org.bluez.MediaControl1.Previous");
+               BashCommands.backButton);
           },
           child: Container(
             decoration: BoxDecoration(
@@ -77,7 +79,7 @@ class MusicControl extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             ServiceClass.runBashCommand(
-                "dbus-send --system --print-reply --dest=org.bluez /org/bluez/hci0/dev_DC_52_85_B0_B8_04 org.bluez.MediaControl1.Pause");
+                BashCommands.pauseButton);
           },
           child: Container(
             decoration: BoxDecoration(
@@ -99,7 +101,7 @@ class MusicControl extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             ServiceClass.runBashCommand(
-                "dbus-send --system --print-reply --dest=org.bluez /org/bluez/hci0/dev_DC_52_85_B0_B8_04 org.bluez.MediaControl1.Play");
+                BashCommands.playButton);
           },
           child: Container(
             decoration: BoxDecoration(
@@ -121,7 +123,7 @@ class MusicControl extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             ServiceClass.runBashCommand(
-                "dbus-send --system --print-reply --dest=org.bluez /org/bluez/hci0/dev_DC_52_85_B0_B8_04 org.bluez.MediaControl1.Next");
+                BashCommands.skipButton);
           },
           child: Container(
             decoration: BoxDecoration(

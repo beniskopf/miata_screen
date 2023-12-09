@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:miata_screen/compassui.dart';
@@ -103,8 +104,9 @@ class _MyHomePageState extends State<MyHomePage> {
     //     GpsDto.fromJson(httpResponse.body as Map<String, dynamic>);
     final rawData = await ServiceClass.runBashCommand("curl http://127.0.0.1:5000/get_gps_data");
     print(rawData);
+    Map<String, dynamic> jsonMap = json.decode(rawData);
     GpsDto response =
-    GpsDto.fromJson(rawData as Map<String, dynamic>);
+    GpsDto.fromJson(jsonMap);
     setState(() {
       speed = response.speed ?? response.speed! * 3.6;
 
@@ -119,6 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
       gpsTemp = response;
     });
+    await Future.delayed(Duration(milliseconds: 500));
     gpsSpinning();
   }
 

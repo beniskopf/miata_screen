@@ -62,9 +62,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    //songInfoSpinning();
+    songInfoSpinning();
     //speedSpinningDemo();
-    //timeAndDateSpinning();
+    timeAndDateSpinning();
     gpsSpinning();
     super.initState();
   }
@@ -103,25 +103,24 @@ class _MyHomePageState extends State<MyHomePage> {
     // GpsDto response =
     //     GpsDto.fromJson(httpResponse.body as Map<String, dynamic>);
     final rawData = await ServiceClass.runBashCommand("curl http://127.0.0.1:5000/get_gps_data");
-    print(rawData);
     Map<String, dynamic> jsonMap = json.decode(rawData);
-    GpsDto response =
-    GpsDto.fromJson(jsonMap);
+    //print(rawData);
+    GpsDto response = GpsDto.fromJson(jsonMap);
     setState(() {
       speed = response.speed ?? response.speed! * 3.6;
 
-      if (gpsTemp != null &&
-          gpsTemp?.longitude != null &&
-          gpsTemp?.latitude != null &&
-          response != null &&
-          response.latitude != null &&
-          response.longitude != null) {
-        degreeDirection = CompassCalc.calculateBearing(gpsTemp!.latitude!,
-            gpsTemp!.longitude!, response.latitude!, response.longitude!);
-      }
+      // if (gpsTemp != null &&
+      //     gpsTemp?.longitude != null &&
+      //     gpsTemp?.latitude != null &&
+      //     response != null &&
+      //     response.latitude != null &&
+      //     response.longitude != null) {
+      //   degreeDirection = CompassCalc.calculateBearing(gpsTemp!.latitude!,
+      //       gpsTemp!.longitude!, response.latitude!, response.longitude!);
+      // }
       gpsTemp = response;
     });
-    await Future.delayed(Duration(milliseconds: 500));
+    //await Future.delayed(Duration(milliseconds: 200));
     gpsSpinning();
   }
 
@@ -159,6 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // print('The angle between the coordinates is $angle degrees.');
     return Scaffold(
       key: _key,
+      drawerEnableOpenDragGesture: false,
       drawer: Drawer(
           backgroundColor: Colors.transparent,
           shape: const RoundedRectangleBorder(
@@ -244,7 +244,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       onTap: () => setState(() {
                             randomGifIndex++;
                           }),
-                      child: Container()
+                      // child: Container()
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      child: Image.asset(
+                        "assets/randomgifs/resized_x${randomGifIndex % 29 + 1}.gif",
+                        fit: BoxFit.cover, // Adjust the fit as needed
+                      ))
                       // child: GifWidget(
                       //     "assets/randomgifs/resized_x${randomGifIndex % 29 + 1}.gif"),
                       )),

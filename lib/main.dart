@@ -13,6 +13,30 @@ import 'debugDrawer.dart';
 import 'musicControl.dart';
 import 'package:http/http.dart' as http;
 
+class BrightnessAdjuster extends StatelessWidget {
+  final Widget child;
+  final double opacity;
+
+  BrightnessAdjuster({required this.child, this.opacity = 0.5});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        child,
+        Opacity(
+          opacity: opacity,
+          child: Container(
+            color: Colors.black, // Customize the color as needed
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 Future<void> main() async {
   // WidgetsFlutterBinding.ensureInitialized();
   // await windowManager.ensureInitialized();
@@ -33,7 +57,7 @@ class MyApp extends StatelessWidget {
         fontFamily: "KarmaticArcade",
         useMaterial3: true,
       ),
-      home: MyHomePage(),
+      home:BrightnessAdjuster(child: MyHomePage()),
     );
   }
 }
@@ -59,9 +83,11 @@ class _MyHomePageState extends State<MyHomePage> {
   String time = "";
   String date = "";
   GpsDto? gpsTemp;
+  late Map<String, dynamic> configData;
 
   @override
   void initState() {
+    //configData = await ServiceClass.readConfigFile();
     songInfoSpinning();
     //speedSpinningDemo();
     timeAndDateSpinning();
@@ -72,7 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
   timeAndDateSpinning() async {
     String timereturn = await ServiceClass.runBashCommand(BashCommands.getTime);
     String datereturn = await ServiceClass.runBashCommand(BashCommands.getDate);
-    // print(time + date);
     setState(() {
       time = timereturn ?? "";
       date = datereturn ?? ""; //char check would be sweet
@@ -195,12 +220,12 @@ class _MyHomePageState extends State<MyHomePage> {
               Positioned(
                 left: 10,
                 top: 190,
-                child: MainMenuButton("debug", () {
+                child: MainMenuButton("settings", () {
                   setState(() {
                     drawerContent = ListView.separated(
-                      itemCount: DrawerContentClass.debugContent().length,
+                      itemCount: DrawerContentClass.debugContent(context).length,
                       itemBuilder: (BuildContext context, int index) {
-                        return DrawerContentClass.debugContent()[index];
+                        return DrawerContentClass.debugContent(context)[index];
                       },
                       separatorBuilder: (BuildContext context, int index) {
                         return SizedBox(height: 5.0);
@@ -208,7 +233,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   });
                   _key.currentState!.openDrawer();
-                }, "assets/debug.jpg", 200, 200),
+                }, "assets/settings.jpg", 200, 200),
               ),
               Positioned(
                   left: 220,

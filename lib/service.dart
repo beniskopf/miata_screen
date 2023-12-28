@@ -1,6 +1,44 @@
 import 'dart:io';
+import 'dart:convert';
 
 class ServiceClass{
+
+  static Future<Map<String, dynamic>> readConfigFile() async {
+    try {
+      // Specify the path to the config file
+      String filePath = '/home/rp/config.txt';
+
+      // Read the contents of the file
+      File file = File(filePath);
+      String contents = await file.readAsString();
+
+      // Parse the JSON data
+      Map<String, dynamic> configData = json.decode(contents);
+
+      return configData;
+    } catch (e) {
+      // Handle any errors that might occur during the file read
+      print('Error reading config file: $e');
+      return {};
+    }
+  }
+
+  static Future<void> writeConfigFile(Map<String, dynamic> data) async {
+    try {
+      // Specify the path to the config file
+      String filePath = '/home/rp/config.txt';
+
+      // Encode the data to JSON format
+      String jsonData = json.encode(data);
+
+      // Write the data to the file
+      File file = File(filePath);
+      await file.writeAsString(jsonData);
+    } catch (e) {
+      // Handle any errors that might occur during the file write
+      print('Error writing to config file: $e');
+    }
+  }
 
   static Future<String> runBashCommand(String command) async {
     try {

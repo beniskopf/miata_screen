@@ -1,27 +1,99 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:miata_screen/service.dart';
+
+import 'GpsDto.dart';
+import 'bashCommands.dart';
 
 class SpeedoMeterBars extends StatefulWidget {
-  double speed;
-
-  SpeedoMeterBars(this.speed);
-
   @override
   State<SpeedoMeterBars> createState() => _SpeedoMeterBarsState();
 }
 
 class _SpeedoMeterBarsState extends State<SpeedoMeterBars> {
+  double speed = 0;
+  GpsDto? gpsTemp;
+  double degreeDirectionTempDemo = 0.1;
+  double degreeDirection = 0;
+  bool isGoingUpDemoSpeed = true;
+
+  @override
+  initState() {
+    super.initState();
+    gpsSpinning();
+  }
+
+  gpsSpinning() async {
+    final rawData = await ServiceClass.runBashCommand(BashCommands.getGpsData);
+    Map<String, dynamic> jsonMap = json.decode(rawData);
+    GpsDto response = GpsDto.fromJson(jsonMap);
+    if(response.latitude==0.0 || response.latitude == 0.0){
+      gpsSpinning();
+    }else{
+      setState(() {
+        speed = response.speed ?? response.speed! * 3.6;
+
+        // if (gpsTemp != null &&
+        //     gpsTemp?.longitude != null &&
+        //     gpsTemp?.latitude != null &&
+        //     response != null &&
+        //     response.latitude != null &&
+        //     response.longitude != null) {
+        //   degreeDirection = CompassCalc.calculateBearing(gpsTemp!.latitude!,
+        //       gpsTemp!.longitude!, response.latitude!, response.longitude!);
+        // }
+
+        gpsTemp = response;
+      });
+      gpsSpinning();
+    }
+  }
+
   List<bool> getActiveList(double x) {
     List<bool> activeList = List.generate(30, (index) => index < x / 100 * 30);
     return activeList;
   }
 
+  speedSpinningDemo() async {
+    setState(() {
+      degreeDirectionTempDemo++;
+      degreeDirection = degreeDirectionTempDemo % 360;
+      isGoingUpDemoSpeed ? speed++ : speed--;
+    });
+    await Future.delayed(Duration(milliseconds: 30));
+
+    if (speed > 100) {
+      setState(() {
+        isGoingUpDemoSpeed = false;
+      });
+    }
+    if (speed < 0) {
+      setState(() {
+        isGoingUpDemoSpeed = true;
+      });
+    }
+    speedSpinningDemo();
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    var activeList = getActiveList(widget.speed);
+    var activeList = getActiveList(speed);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
+        Positioned(
+          left: 1030,
+          top: 72,
+          child: Container(
+            child: SpeedoMeterNumber(speed),
+            height: 100,
+            width: 200,
+            // color: Colors.white.withOpacity(.2),
+          ),
+        ),
         lowBar(activeList[0]),
         lowBar(activeList[1]),
         lowBar(activeList[2]),

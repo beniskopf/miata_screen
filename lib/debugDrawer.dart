@@ -15,77 +15,51 @@ class DrawerContentClass {
           ),
         ),
         onPressed: () => onPress(),
-        child: Text(title));
+        child: Text(
+          title,
+          style: TextStyle(fontSize: 30),
+        ));
   }
 
   static List<Widget> debugContent(BuildContext context) {
     return [
       getListTileButton("restart raspberry", () {
-        ServiceClass.runBashCommand(
-            BashCommands.restartSystem);
+        ServiceClass.runBashCommand(BashCommands.restartSystem);
       }),
       getListTileButton("shutdown raspberry", () {
-        ServiceClass.runBashCommand(
-            BashCommands.shutdownSystem);
+        ServiceClass.runBashCommand(BashCommands.shutdownSystem);
       }),
       Divider(),
       getListTileButton("connect bt", () {
-        ServiceClass.runBashCommand(
-            BashCommands.btconnect);
+        ServiceClass.runBashCommand(BashCommands.btconnect);
       }),
       getListTileButton("disconnect bt", () {
-        ServiceClass.runBashCommand(
-            BashCommands.btdisconnect);
+        ServiceClass.runBashCommand(BashCommands.btdisconnect);
       }),
       getListTileButton("pair bt", () {
-        ServiceClass.runBashCommand(
-            BashCommands.btpair);
+        ServiceClass.runBashCommand(BashCommands.btpair);
       }),
       getListTileButton("change bt mac address", () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ChangeMacPage(title: '',)),
+          MaterialPageRoute(builder: (context) => ChangeMacPage()),
         );
         //_showDialog(context);
       }),
+      Divider(),
+      getListTileButton("default brightness", () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  ChangeNumberPage("defaultBrightness", "min 0 and max 100")),
+        );
+      }),
+      Divider(),
+      getListTileButton("set hours", () {}),
+      getListTileButton("set minutes", () {}),
+      getListTileButton("set month", () {}),
+      getListTileButton("set year", () {}),
     ];
   }
-
-  static Future<void> _showDialog(BuildContext context) async {
-    TextEditingController _textFieldController = TextEditingController();
-
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Enter Text'),
-          content: TextField(
-            controller: _textFieldController,
-            decoration: InputDecoration(hintText: 'Enter text here...'),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                // Get the entered text when OK is pressed
-                String enteredText = _textFieldController.text;
-                print('Entered text: $enteredText');
-
-                // Close the dialog
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                // Close the dialog without doing anything
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
-

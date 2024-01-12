@@ -5,13 +5,37 @@ import 'package:miata_screen/squareButton.dart';
 
 import 'bashCommands.dart';
 
-class MusicControl extends StatelessWidget {
+class MusicControl extends StatefulWidget {
+  @override
+  State<MusicControl> createState() => _MusicControlState();
+}
 
-  String songTitle;
-  String artistName;
+class _MusicControlState extends State<MusicControl> {
+  String songTitle = "x";
+  String artistName = "x";
 
+  songInfoSpinning() async {
+    String payload =
+        await ServiceClass.runBashCommand(BashCommands.getSongInfo1);
+    if (payload == "error") {
+      payload = await ServiceClass.runBashCommand(BashCommands.getSongInfo2);
+    }
+    Map<String, String> artistSongMap =
+        ServiceClass.extractArtistAndTitle(payload);
 
-  MusicControl(this.songTitle, this.artistName);
+    setState(() {
+      songTitle = artistSongMap['Title'] ?? "xx";
+      artistName = artistSongMap['Artist'] ?? "xx";
+    });
+    await Future.delayed(Duration(seconds: 5));
+    songInfoSpinning();
+  }
+
+  @override
+  initState() {
+    songInfoSpinning();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +80,7 @@ class MusicControl extends StatelessWidget {
       case 0: //back button
         return GestureDetector(
           onTap: () {
-            ServiceClass.runBashCommand(
-               BashCommands.backButton);
+            ServiceClass.runBashCommand(BashCommands.backButton);
           },
           child: Container(
             decoration: BoxDecoration(
@@ -78,8 +101,7 @@ class MusicControl extends StatelessWidget {
       case 1: //pause
         return GestureDetector(
           onTap: () {
-            ServiceClass.runBashCommand(
-                BashCommands.pauseButton);
+            ServiceClass.runBashCommand(BashCommands.pauseButton);
           },
           child: Container(
             decoration: BoxDecoration(
@@ -100,8 +122,7 @@ class MusicControl extends StatelessWidget {
       case 2:
         return GestureDetector(
           onTap: () {
-            ServiceClass.runBashCommand(
-                BashCommands.playButton);
+            ServiceClass.runBashCommand(BashCommands.playButton);
           },
           child: Container(
             decoration: BoxDecoration(
@@ -122,8 +143,7 @@ class MusicControl extends StatelessWidget {
       case 3: //next
         return GestureDetector(
           onTap: () {
-            ServiceClass.runBashCommand(
-                BashCommands.skipButton);
+            ServiceClass.runBashCommand(BashCommands.skipButton);
           },
           child: Container(
             decoration: BoxDecoration(
@@ -147,25 +167,39 @@ class MusicControl extends StatelessWidget {
   }
 }
 
-class VolumeControl extends StatelessWidget{
+class VolumeControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      MainMenuButton(
-        "VOL\nup",
-          (){ServiceClass.runBashCommand(
-              "amixer sset 'Master' 5%+");},
-          "assets/debug.jpg",
-        95,95
-      ),
-      MainMenuButton(
-          "VOL\ndown",
-              (){ServiceClass.runBashCommand(
-              "amixer sset 'Master' 5%-");},
-          "assets/debug.jpg",
-          95,95
-      )
-    ],);
+    return Column(
+      children: [
+        MainMenuButton("VOL\nup", () {
+          ServiceClass.runBashCommand("amixer sset 'Master' 5%+");
+        }, "assets/debug.jpg", 95, 95),
+        MainMenuButton("VOL\ndown", () {
+          ServiceClass.runBashCommand("amixer sset 'Master' 5%-");
+        }, "assets/debug.jpg", 95, 95)
+      ],
+    );
   }
+}
 
+class BrightnessControl extends StatelessWidget {
+  late Function onBrightnessUpPress;
+  late Function onBrightnessDownPress;
+
+  BrightnessControl(this.onBrightnessUpPress, this.onBrightnessDownPress);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        MainMenuButton("BR.UP", () {
+          onBrightnessUpPress();
+        }, "assets/debug.jpg", 95, 95),
+        MainMenuButton("BR.DOwn", () {
+          onBrightnessDownPress();
+        }, "assets/debug.jpg", 95, 95)
+      ],
+    );
+  }
 }

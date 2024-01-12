@@ -13,4 +13,7 @@ class BashCommands{
   static String btconnect = "bash /home/rp/btconnect.sh";
   static String btdisconnect = "bash /home/rp/btdisconnect.sh";
   static String btpair = "bash /home/rp/btpair.sh";
+  static String getGifDirFileCount = "echo \$(ls -lA | wc -l)";
+  static String toggleGarage = "sudo bash /home/rp/garagetoggle.sh";
+  static String getGpsData = "curl http://127.0.0.1:5000/get_gps_data";
 }

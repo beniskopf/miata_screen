@@ -1,14 +1,10 @@
-import 'dart:convert';
 import 'dart:io';
-
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:miata_screen/compassui.dart';
 import 'package:miata_screen/service.dart';
 import 'package:miata_screen/speedometer.dart';
 import 'package:miata_screen/squareButton.dart';
 import 'package:provider/provider.dart';
-import 'GpsDto.dart';
 import 'bashCommands.dart';
 import 'brightnessAdjuster.dart';
 import 'colorPickerDrawer.dart';
@@ -71,7 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // loadConfig();
     //timeAndDateSpinning();
     countGifDirFiles();
-
   }
 
   // loadConfig() async {
@@ -84,17 +79,9 @@ class _MyHomePageState extends State<MyHomePage> {
     String temp =
         await ServiceClass.runBashCommand(BashCommands.getGifDirFileCount);
     gifDirCount = int.parse(temp);
-  }
-
-  timeAndDateSpinning() async {
-    String timereturn = await ServiceClass.runBashCommand(BashCommands.getTime);
-    String datereturn = await ServiceClass.runBashCommand(BashCommands.getDate);
     setState(() {
-      time = timereturn ?? "";
-      date = datereturn ?? ""; //char check would be sweet
+      randomGifIndex = Random().nextInt(gifDirCount);
     });
-    await Future.delayed(Duration(seconds: 59));
-    timeAndDateSpinning();
   }
 
   double randomDouble() {
@@ -189,9 +176,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         isLoading = false;
                       });
                       if (temp.contains("relay active")) {
-                        _showDialog(context, "action ok");
+                        ServiceClass.showDialogBox(context, "action ok");
                       } else {
-                        _showDialog(
+                        ServiceClass.showDialogBox(
                             context, "action failed, back to the lobby");
                       }
                     }, "assets/garage.jpeg", 200, 200)),
@@ -206,21 +193,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       Provider.of<BrightnessProvider>(context, listen: false)
                           .setBrightness(brightness + 0.1);
                     })),
-                // Positioned(
-                //     left: 450,
-                //     top: 10,
-                //     child: CompassUi(
-                //       x: degreeToOffset(degreeDirection),
-                //       y: 0,
-                //       imagePath: "assets/compass.png",
-                //     )),
                 if (gifDirCount > 0)
                   Positioned(
                       left: 1070,
                       top: 190,
                       child: GestureDetector(
                           onTap: () => setState(() {
-                                randomGifIndex++;
+                                randomGifIndex = Random().nextInt(gifDirCount);
                               }),
                           child: Container(
                               width: 200,
@@ -228,15 +207,14 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: Image.file(
                                 File(
                                     "/home/rp/randomgifs/output/resized_x${randomGifIndex % gifDirCount + 1}.gif"),
-                                // "assets/randomgifs/resized_x${randomGifIndex % 29 + 1}.gif",
                                 fit: BoxFit.cover, // Adjust the fit as needed
                               )))),
                 Positioned(
                   left: 445,
-                  top: 72,
+                  top: 10,
                   child: Container(
                     child: SpeedoMeterBars(),
-                    height: 100,
+                    height: 170,
                     width: 833,
                     // color: Colors.white.withOpacity(.2),
                   ),
@@ -282,31 +260,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             )),
       ),
-    );
-  }
-
-  double degreeToOffset(double degree) {
-    return -degree * (770 / 180) - 370;
-  }
-
-  Future<void> _showDialog(BuildContext context, String hintText) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Message'),
-          content: Text(hintText),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 }

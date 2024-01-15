@@ -9,7 +9,7 @@ class GpsDto {
   GpsDto.fromJson(Map<String, dynamic> json) {
     latitude = json['latitude'];
     longitude = json['longitude'];
-    speed = json['speed'];
+    speed = json['speed'] == "N/A" ? 0.0 : json['speed'];
     timestamp = json['timestamp'];
   }
 

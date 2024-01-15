@@ -16,4 +16,13 @@ class BashCommands{
   static String getGifDirFileCount = "echo \$(ls -lA | wc -l)";
   static String toggleGarage = "sudo bash /home/rp/garagetoggle.sh";
   static String getGpsData = "curl http://127.0.0.1:5000/get_gps_data";
+  static String unblockWifi = "sudo rfkill unblock wifi";
+  static String blockWifi = "sudo rfkill block wifi";
+  static String unblockBt = "sudo rfkill unblock bluetooth";
+  static String blockBt = "sudo rfkill block bluetooth";
+  static String rfkill = "rfkill";
+  static String ifconfig = "ifconfig | grep \"inet \"";
+  static String connectMultimetro = "sudo nmcli device wifi connect multimetro25787 password \"QyCyUHsUGu\"";
+  static String connectFritzbox = "sudo nmcli device wifi connect Fleischhaus password \"hurensohn123\"";
+
 }

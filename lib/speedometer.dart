@@ -6,6 +6,7 @@ import 'package:miata_screen/service.dart';
 
 import 'GpsDto.dart';
 import 'bashCommands.dart';
+import 'compassui.dart';
 
 class SpeedoMeterBars extends StatefulWidget {
   @override
@@ -22,16 +23,16 @@ class _SpeedoMeterBarsState extends State<SpeedoMeterBars> {
   @override
   initState() {
     super.initState();
-    gpsSpinning();
+    speedSpinningDemo();
   }
 
   gpsSpinning() async {
     final rawData = await ServiceClass.runBashCommand(BashCommands.getGpsData);
     Map<String, dynamic> jsonMap = json.decode(rawData);
     GpsDto response = GpsDto.fromJson(jsonMap);
-    if(response.latitude==0.0 || response.latitude == 0.0){
+    if (response.latitude == 0.0 || response.latitude == 0.0) {
       gpsSpinning();
-    }else{
+    } else {
       setState(() {
         speed = response.speed ?? response.speed! * 3.6;
 
@@ -56,74 +57,82 @@ class _SpeedoMeterBarsState extends State<SpeedoMeterBars> {
     return activeList;
   }
 
+  double degreeToOffset(double degree) {
+    return -degree * (770 / 180) - 370;
+  }
+
   speedSpinningDemo() async {
     setState(() {
-      degreeDirectionTempDemo++;
-      degreeDirection = degreeDirectionTempDemo % 360;
       isGoingUpDemoSpeed ? speed++ : speed--;
     });
-    await Future.delayed(Duration(milliseconds: 30));
+    await Future.delayed(Duration(milliseconds: 10));
 
     if (speed > 100) {
       setState(() {
         isGoingUpDemoSpeed = false;
       });
     }
-    if (speed < 0) {
-      setState(() {
-        isGoingUpDemoSpeed = true;
-      });
+    if (speed < 1) {
+      gpsSpinning();
+      return;
     }
     speedSpinningDemo();
   }
 
-
   @override
   Widget build(BuildContext context) {
     var activeList = getActiveList(speed);
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
+    return Stack(
       children: [
         Positioned(
-          left: 1030,
-          top: 72,
-          child: Container(
-            child: SpeedoMeterNumber(speed),
-            height: 100,
-            width: 200,
-            // color: Colors.white.withOpacity(.2),
+            left: 0,
+            top: 0,
+            child: CompassUi(
+              x: degreeToOffset(degreeDirection),
+              y: 0,
+              imagePath: "assets/compass.png",
+            )),
+        Positioned(
+          left: 0,
+          top: 70,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              lowBar(activeList[0]),
+              lowBar(activeList[1]),
+              lowBar(activeList[2]),
+              lowBar(activeList[3]),
+              mediumBar(activeList[4]),
+              mediumBar(activeList[5]),
+              mediumBar(activeList[6]),
+              mediumBar(activeList[7]),
+              highBar(activeList[8]),
+              highBar(activeList[9]),
+              highBar(activeList[10]),
+              highBar(activeList[11]),
+              highBar(activeList[12]),
+              highBar(activeList[13]),
+              highBar(activeList[14]),
+              ultraHighBar(activeList[15]),
+              ultraHighBar(activeList[16]),
+              ultraHighBar(activeList[17]),
+              ultraHighBar(activeList[18]),
+              ultraHighBar(activeList[19]),
+              ultraHighBar(activeList[20]),
+              ultraHighBar(activeList[21]),
+              ultraHighBar(activeList[22]),
+              ultraHighBar(activeList[23]),
+              ultraHighBar(activeList[24]),
+              ultraHighBar(activeList[25]),
+              ultraHighBar(activeList[26]),
+              ultraHighBar(activeList[27]),
+              ultraHighBar(activeList[28]),
+              ultraHighBar(activeList[29]),
+            ],
           ),
         ),
-        lowBar(activeList[0]),
-        lowBar(activeList[1]),
-        lowBar(activeList[2]),
-        lowBar(activeList[3]),
-        mediumBar(activeList[4]),
-        mediumBar(activeList[5]),
-        mediumBar(activeList[6]),
-        mediumBar(activeList[7]),
-        highBar(activeList[8]),
-        highBar(activeList[9]),
-        highBar(activeList[10]),
-        highBar(activeList[11]),
-        highBar(activeList[12]),
-        highBar(activeList[13]),
-        highBar(activeList[14]),
-        ultraHighBar(activeList[15]),
-        ultraHighBar(activeList[16]),
-        ultraHighBar(activeList[17]),
-        ultraHighBar(activeList[18]),
-        ultraHighBar(activeList[19]),
-        ultraHighBar(activeList[20]),
-        ultraHighBar(activeList[21]),
-        ultraHighBar(activeList[22]),
-        ultraHighBar(activeList[23]),
-        ultraHighBar(activeList[24]),
-        ultraHighBar(activeList[25]),
-        ultraHighBar(activeList[26]),
-        ultraHighBar(activeList[27]),
-        ultraHighBar(activeList[28]),
-        ultraHighBar(activeList[29]),
+        Positioned(left: 600, top: 70, child: SpeedoMeterNumber(speed))
       ],
     );
   }
@@ -174,7 +183,7 @@ class SpeedoMeterNumber extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 100,
-      width: 100,
+      width: 200,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [

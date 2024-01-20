@@ -172,12 +172,12 @@ class VolumeControl extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        MainMenuButton("VOL\nup", () {
+        MainMenuButton( showShadow: false," ", () {
           ServiceClass.runBashCommand("amixer sset 'Master' 5%+");
-        }, "assets/debug.jpg", 95, 95),
-        MainMenuButton("VOL\ndown", () {
+        }, "assets/vol_up.png", 95, 95),
+        MainMenuButton(showShadow: false," ", () {
           ServiceClass.runBashCommand("amixer sset 'Master' 5%-");
-        }, "assets/debug.jpg", 95, 95)
+        }, "assets/vol_down.png", 95, 95)
       ],
     );
   }

@@ -24,5 +24,5 @@ class BashCommands{
   static String ifconfig = "ifconfig | grep \"inet \"";
   static String connectMultimetro = "sudo nmcli device wifi connect multimetro25787 password \"QyCyUHsUGu\"";
   static String connectFritzbox = "sudo nmcli device wifi connect Fleischhaus password \"hurensohn123\"";
-
+  static String pgrep = "pgrep -f flutter-pi";
 }

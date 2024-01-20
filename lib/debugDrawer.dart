@@ -37,6 +37,10 @@ class DrawerContentClass {
         String temp = await ServiceClass.runBashCommand(BashCommands.ifconfig);
         ServiceClass.showDialogBox(context, temp);
       }),
+      getListTileButton("pgrep -f flutter-pi", () async {
+        String temp = await ServiceClass.runBashCommand(BashCommands.rfkill);
+        ServiceClass.showDialogBox(context, temp);
+      }),
       Divider(),
       getListTileButton("soft block bt", () {
         ServiceClass.runBashCommand(BashCommands.blockBt);
@@ -53,13 +57,13 @@ class DrawerContentClass {
       getListTileButton("pair bt", () {
         ServiceClass.runBashCommand(BashCommands.btpair);
       }),
-      getListTileButton("change bt mac address", () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ChangeMacPage()),
-        );
-        //_showDialog(context);
-      }),
+      // getListTileButton("change bt mac address", () {
+      //   Navigator.push(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => ChangeMacPage()),
+      //   );
+      //   //_showDialog(context);
+      // }),
       Divider(),
       getListTileButton("fritzbox connect", () async {
         await ServiceClass.runBashCommand(BashCommands.unblockWifi);

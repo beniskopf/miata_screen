@@ -22,8 +22,8 @@ class _SpeedoMeterBarsState extends State<SpeedoMeterBars> {
 
   @override
   initState() {
-    super.initState();
     speedSpinningDemo();
+    super.initState();
   }
 
   gpsSpinning() async {

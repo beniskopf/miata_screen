@@ -9,6 +9,7 @@ import 'bashCommands.dart';
 import 'brightnessAdjuster.dart';
 import 'colorPickerDrawer.dart';
 import 'debugDrawer.dart';
+import 'filepicker.dart';
 import 'musicControl.dart';
 
 Future<void> main() async {
@@ -166,21 +167,25 @@ class _MyHomePageState extends State<MyHomePage> {
                     left: 430,
                     top: 190,
                     child: MainMenuButton("garage", () async {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      await Future.delayed(Duration(seconds: 5));
-                      String temp = await ServiceClass.runBashCommand(
-                          BashCommands.toggleGarage);
-                      setState(() {
-                        isLoading = false;
-                      });
-                      if (temp.contains("relay active")) {
-                        ServiceClass.showDialogBox(context, "action ok");
-                      } else {
-                        ServiceClass.showDialogBox(
-                            context, "action failed, back to the lobby");
-                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MyFileListWidget(directoryPath: '/home/rp/media', context: context,)),
+                      );
+                      // setState(() {
+                      //   isLoading = true;
+                      // });
+                      // await Future.delayed(Duration(seconds: 5));
+                      // String temp = await ServiceClass.runBashCommand(
+                      //     BashCommands.toggleGarage);
+                      // setState(() {
+                      //   isLoading = false;
+                      // });
+                      // if (temp.contains("relay active")) {
+                      //   ServiceClass.showDialogBox(context, "action ok");
+                      // } else {
+                      //   ServiceClass.showDialogBox(
+                      //       context, "action failed, back to the lobby");
+                      // }
                     }, "assets/garage.jpeg", 200, 200)),
                 Positioned(left: 850, top: 190, child: VolumeControl()),
                 Positioned(

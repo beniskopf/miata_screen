@@ -25,4 +25,6 @@ class BashCommands{
   static String connectMultimetro = "sudo nmcli device wifi connect multimetro25787 password \"QyCyUHsUGu\"";
   static String connectFritzbox = "sudo nmcli device wifi connect Fleischhaus password \"hurensohn123\"";
   static String pgrep = "pgrep -f flutter-pi";
+  static String changeColor = "sudo python3 /home/rp/ledcontrol.py ";
+  static String getRamUsage = "free -h";
 }

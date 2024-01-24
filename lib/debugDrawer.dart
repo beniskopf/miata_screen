@@ -82,6 +82,11 @@ class DrawerContentClass {
         ServiceClass.runBashCommand(BashCommands.unblockWifi);
       }),
       Divider(),
+      getListTileButton("ram usage", () async {
+        await ServiceClass.runBashCommand(BashCommands.unblockWifi);
+        String temp = await ServiceClass.runBashCommand(BashCommands.getRamUsage);
+        ServiceClass.showDialogBox(context, temp);
+      }),
       // getListTileButton("default brightness", () {
       //   Navigator.push(
       //     context,

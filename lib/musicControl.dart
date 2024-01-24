@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:marquee/marquee.dart';
 import 'package:miata_screen/service.dart';
 import 'package:miata_screen/squareButton.dart';
 
@@ -23,10 +24,14 @@ class _MusicControlState extends State<MusicControl> {
     Map<String, String> artistSongMap =
         ServiceClass.extractArtistAndTitle(payload);
 
-    setState(() {
-      songTitle = artistSongMap['Title'] ?? "xx";
-      artistName = artistSongMap['Artist'] ?? "xx";
-    });
+
+    if (songTitle != artistSongMap['Title'] ||
+        artistName != artistSongMap['Artist']) {
+      setState(() {
+        songTitle = artistSongMap['Title'] ?? "x";
+        artistName = artistSongMap['Artist'] ?? "x";
+      });
+    }
     await Future.delayed(Duration(seconds: 5));
     songInfoSpinning();
   }
@@ -40,11 +45,11 @@ class _MusicControlState extends State<MusicControl> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(5),
       child: Column(
         children: [
           Expanded(
-            flex: 2,
+            flex: 3,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -57,17 +62,63 @@ class _MusicControlState extends State<MusicControl> {
             ),
           ),
           Expanded(
-              flex: 1,
+              flex: 2,
               child: Column(
                 children: [
-                  Text(
-                    songTitle,
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+              Container(
+                //color: Colors.green,
+                width: 400,
+                height: 30,
+                child: Marquee(
+                            text: songTitle,
+                             style: TextStyle(color: Colors.white, fontSize: 25),
+                            scrollAxis: Axis.horizontal,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            blankSpace: 40,
+                            velocity: 40,
+                            pauseAfterRound: Duration(seconds: 1),
+                            showFadingOnlyWhenScrolling: true,
+                            fadingEdgeStartFraction: 0.1,
+                            fadingEdgeEndFraction: 0.1,
+                            startPadding: 10,
+                            accelerationDuration: Duration(seconds: 1),
+                            accelerationCurve: Curves.linear,
+                            decelerationDuration: Duration(milliseconds: 500),
+                            decelerationCurve: Curves.easeOut,
+                            textDirection: TextDirection.rtl
+                          ),
+              ),
+                  Container(
+                   // color: Colors.yellow,
+                    width: 400,
+                    height: 30,
+                    child: Marquee(
+                        text: artistName,
+                        style: TextStyle(color: Colors.white, fontSize: 25),
+                        scrollAxis: Axis.horizontal,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        blankSpace: 30,
+                        velocity: 50,
+                        pauseAfterRound: Duration(seconds: 1),
+                        showFadingOnlyWhenScrolling: true,
+                        fadingEdgeStartFraction: 0.1,
+                        fadingEdgeEndFraction: 0.1,
+                        startPadding: 10,
+                        accelerationDuration: Duration(seconds: 1),
+                        accelerationCurve: Curves.linear,
+                        decelerationDuration: Duration(milliseconds: 500),
+                        decelerationCurve: Curves.easeOut,
+                        textDirection: TextDirection.rtl
+                    ),
                   ),
-                  Text(
-                    artistName,
-                    style: TextStyle(color: Colors.white),
-                  )
+                  // Text(
+                  //   songTitle,
+                  //   style: TextStyle(color: Colors.white, fontSize: 16),
+                  // ),
+                  // Text(
+                  //   artistName,
+                  //   style: TextStyle(color: Colors.white),
+                  // )
                 ],
               ))
         ],
@@ -172,10 +223,10 @@ class VolumeControl extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        MainMenuButton( showShadow: false," ", () {
+        MainMenuButton(showShadow: false, " ", () {
           ServiceClass.runBashCommand("amixer sset 'Master' 5%+");
         }, "assets/vol_up.png", 95, 95),
-        MainMenuButton(showShadow: false," ", () {
+        MainMenuButton(showShadow: false, " ", () {
           ServiceClass.runBashCommand("amixer sset 'Master' 5%-");
         }, "assets/vol_down.png", 95, 95)
       ],

@@ -27,7 +27,6 @@ class ServiceClass{
     );
   }
 
-
   static Future<Map<String, dynamic>> readConfigFile() async {
     try {
       // Specify the path to the config file
@@ -94,8 +93,8 @@ class ServiceClass{
     final artistMatch = artistRegex.firstMatch(payload);
     final titleMatch = titleRegex.firstMatch(payload);
 
-    final artist = artistMatch?.group(1) ?? 'Artist not found';
-    final title = titleMatch?.group(1) ?? 'Title not found';
+    final artist = artistMatch?.group(1) ?? 'x';
+    final title = titleMatch?.group(1) ?? 'x';
 
     return {
       'Artist': artist,

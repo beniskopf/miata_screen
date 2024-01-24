@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutterpi_gstreamer_video_player/flutterpi_gstreamer_video_player.dart';
 import 'package:miata_screen/service.dart';
 import 'package:miata_screen/speedometer.dart';
 import 'package:miata_screen/squareButton.dart';
@@ -13,6 +14,7 @@ import 'filepicker.dart';
 import 'musicControl.dart';
 
 Future<void> main() async {
+  FlutterpiVideoPlayer.registerWith();
   runApp(const MyApp());
 }
 
@@ -32,8 +34,6 @@ class MyApp extends StatelessWidget {
         create: (context) => BrightnessProvider(),
         child: MyHomePage(),
       ),
-      //
-      // BrightnessAdjuster(child: MyHomePage()),
     );
   }
 }
@@ -65,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     ServiceClass.runBashCommand(BashCommands.btconnect);
+    loadLedConfig();
     // loadConfig();
     //timeAndDateSpinning();
     countGifDirFiles();
@@ -75,6 +76,15 @@ class _MyHomePageState extends State<MyHomePage> {
   //   Provider.of<BrightnessProvider>(context, listen: false)
   //       .setBrightness(configData["defaultBrightness"]/100);
   // }
+
+  loadLedConfig() async {
+    print('config load');
+    Map<String, dynamic> configData = await ServiceClass.readConfigFile();
+    if (configData["ledColor"] != null) {
+      await ServiceClass.runBashCommand(
+          BashCommands.changeColor + configData["ledColor"]);
+    }
+  }
 
   countGifDirFiles() async {
     String temp =

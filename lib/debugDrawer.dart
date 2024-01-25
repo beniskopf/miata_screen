@@ -23,6 +23,10 @@ class DrawerContentClass {
 
   static List<Widget> debugContent(BuildContext context) {
     return [
+      getListTileButton("stop audio", () {
+        ServiceClass.runBashCommand(BashCommands.stopAudioProcess);
+      }),
+      Divider(),
       getListTileButton("restart raspberry", () {
         ServiceClass.runBashCommand(BashCommands.restartSystem);
       }),

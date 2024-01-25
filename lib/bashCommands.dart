@@ -27,4 +27,6 @@ class BashCommands{
   static String pgrep = "pgrep -f flutter-pi";
   static String changeColor = "sudo python3 /home/rp/ledcontrol.py ";
   static String getRamUsage = "free -h";
+  static String playMp3Song = "gst-launch-1.0 playbin uri=file://";
+  static String stopAudioProcess = "pkill -f \"gst-launch-1.0 playbin\"";
 }

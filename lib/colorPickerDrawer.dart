@@ -14,42 +14,24 @@ class _ColorPickerState extends State<ColorPicker> {
   String finalColor = "";
   List<Color> currentColors = [Colors.yellow, Colors.green];
   List<Color> colorHistory = [];
+  int brightness = 100;
 
-  void changeColor(Color color, double brightness) {
+  void changeColor(Color color, int brightness) {
     String colorCodeWithoutAlpha = color.value.toRadixString(16).substring(2);
-    // print(color.value.toRadixString(16));
-    // print(colorCodeWithoutAlpha);
-    // print(brightness.toString());
-
-    // Extract RGB components
-    int red = (color.value >> 16) & 0xFF;
-    int green = (color.value >> 8) & 0xFF;
-    int blue = color.value & 0xFF;
-
-    // Calculate new RGB values with the original brightness
-    red = (red * brightness).round().clamp(0, 255);
-    green = (green * brightness).round().clamp(0, 255);
-    blue = (blue * brightness).round().clamp(0, 255);
-
-    // Combine the new RGB values into a color
-    Color adjustedColor = Color.fromRGBO(red, green, blue, 1.0);
-
-    // Combine the adjusted color's RGB with the original alpha (brightness) information
-    String adjustedColorCode =
-        adjustedColor.value.toRadixString(16).substring(2);
-    String finalColorCode =
-        colorCodeWithoutAlpha + adjustedColorCode.substring(2);
-print(BashCommands.changeColor + finalColorCode);
-    ServiceClass.runBashCommand(BashCommands.changeColor + finalColorCode);
-    finalColor = finalColorCode;
-    setState(() => currentColor = adjustedColor);
+    ServiceClass.runBashCommand(BashCommands.changeColor +
+        colorCodeWithoutAlpha +
+        " " +
+        brightness.toString());
+    finalColor = colorCodeWithoutAlpha + " " + brightness.toString();
+    setState(() => currentColor = color);
   }
 
   void changeColors(List<Color> colors) {
     setState(() => currentColors = colors);
   }
 
-  void changeBrightness(double value) {
+  void changeBrightness(int value) {
+    brightness = value;
     changeColor(currentColor, value);
   }
 
@@ -67,17 +49,20 @@ print(BashCommands.changeColor + finalColorCode);
         Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+          getBrightnessButton(() {
+            changeBrightness(100);
+          }, "100"),
             getBrightnessButton(() {
-              changeBrightness(.6);
+              changeBrightness(60);
             }, "75"),
             getBrightnessButton(() {
-              changeBrightness(.3);
+              changeBrightness(30);
             }, "50"),
             getBrightnessButton(() {
-              changeBrightness(.2);
+              changeBrightness(20);
             }, "20"),
             getBrightnessButton(() {
-              changeBrightness(.1);
+              changeBrightness(10);
             }, "10")
           ],
         ),
@@ -85,30 +70,34 @@ print(BashCommands.changeColor + finalColorCode);
         Expanded(
           child: BlockColorPickerExample(
             pickerColor: currentColor,
-            onColorChanged: (x) => changeColor(x, 1),
+            onColorChanged: (x) => changeColor(x, brightness),
             pickerColors: currentColors,
             onColorsChanged: changeColors,
             colorHistory: colorHistory,
           ),
         ),
         ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                  Radius.circular(0)), // Set to 0 for square borders
+            )),
             onPressed: () async {
               try {
                 Map<String, dynamic> configData =
                     await ServiceClass.readConfigFile();
-                print(configData);
                 configData["ledColor"] = finalColor;
-                print(configData);
+
                 await ServiceClass.writeConfigFile(configData);
                 Navigator.of(context).pop();
-                ServiceClass.showDialogBox(context, "settings changed");
-
+                ServiceClass.showDialogBox(
+                    context, "settings changed to \n" + finalColor);
               } catch (e) {
                 Navigator.of(context).pop();
                 ServiceClass.showDialogBox(context, "error");
               }
             },
-            child: Text('save'))
+            child: Container(height: 100, child: Center(child: Text('save'))))
       ],
     );
   }
@@ -119,7 +108,7 @@ print(BashCommands.changeColor + finalColorCode);
       child: Padding(
         padding: EdgeInsets.fromLTRB(20, 5, 0, 5),
         child: SizedBox(
-          height: 80,
+          height: 60,
           width: 100,
           child:
               Container(child: Center(child: Text(text)), color: Colors.white),
@@ -230,7 +219,6 @@ class _BlockColorPickerExampleState extends State<BlockColorPickerExample> {
     return AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(0.0))),
-      title: const Text('Select a color'),
       content: SingleChildScrollView(
         child: BlockPicker(
           pickerColor: widget.pickerColor,

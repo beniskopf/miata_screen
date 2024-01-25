@@ -8,6 +8,7 @@ import 'package:miata_screen/squareButton.dart';
 import 'package:provider/provider.dart';
 import 'bashCommands.dart';
 import 'brightnessAdjuster.dart';
+import 'chewieDemo.dart';
 import 'colorPickerDrawer.dart';
 import 'debugDrawer.dart';
 import 'filepicker.dart';
@@ -16,6 +17,7 @@ import 'musicControl.dart';
 Future<void> main() async {
   FlutterpiVideoPlayer.registerWith();
   runApp(const MyApp());
+  // runApp(const ChewieDemo(),);
 }
 
 class MyApp extends StatelessWidget {
@@ -78,7 +80,6 @@ class _MyHomePageState extends State<MyHomePage> {
   // }
 
   loadLedConfig() async {
-    print('config load');
     Map<String, dynamic> configData = await ServiceClass.readConfigFile();
     if (configData["ledColor"] != null) {
       await ServiceClass.runBashCommand(
